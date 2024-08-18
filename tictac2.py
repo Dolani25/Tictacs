@@ -13,6 +13,8 @@ import time
 import threading
 import base64
 
+import os
+
 port = int(os.environ.get('PORT', 5000))
 
 app = Flask(__name__)
