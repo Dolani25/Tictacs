@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: TicTacs
+    env: python
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "python3 tictac2.py"
+    ports:
+      - 5000:5000
+    envVars:
+      - key: PORT
+        value: 5000

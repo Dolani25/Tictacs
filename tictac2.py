@@ -13,6 +13,8 @@ import time
 import threading
 import base64
 
+port = int(os.environ.get('PORT', 5000))
+
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '*#Dolani#*'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///tic_tac_toe.db'
@@ -249,4 +251,4 @@ def handle_disconnect():
             del active_games[game_id]
 
 if __name__ == '__main__':
-    socketio.run(app, debug=True)
+    socketio.run(app, host='0.0.0.0', port=port)
