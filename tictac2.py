@@ -12,8 +12,8 @@ import uuid
 import time
 import threading
 import base64
-
 import os
+from flask_session import Session
 
 port = int(os.environ.get('PORT', 5000))
 
@@ -21,10 +21,12 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = '*#Dolani#*'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///tic_tac_toe.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['SESSION_TYPE'] = 'filesystem'
 
-CORS(app)
+Session(app)
+CORS(app, supports_credentials=True)
 db = SQLAlchemy(app)
-socketio = SocketIO(app, cors_allowed_origins="*")
+socketio = SocketIO(app, cors_allowed_origins="*", manage_session=False)
 
 # User model
 class User(db.Model):
@@ -104,36 +106,39 @@ def login():
     if user and user.check_password(password):
         session['user_id'] = user.id
         session['username'] = user.username
-        return jsonify({"message": "Logged in successfully"}), 200
+        return jsonify({"message": "Logged in successfully", "user_id": user.id}), 200
     
     return jsonify({"message": "Invalid username or password"}), 401
 
 @socketio.on('connect')
 def handle_connect():
     print('Client connected')
-    if 'username' in session:
-        username = session['username']
-        user = User.query.filter_by(username=username).first()
-        if user and username not in waiting_players:
-            waiting_players[username] = {
+    user_id = session.get('user_id')
+    if user_id:
+        user = User.query.get(user_id)
+        if user and user.username not in waiting_players:
+            waiting_players[user.username] = {
                 'session_id': request.sid,
                 'timestamp': time.time()
             }
-            emit('queue_joined', {'message': f'Rejoined queue as {username}'}, room=request.sid)
+            emit('queue_joined', {'message': f'Rejoined queue as {user.username}'}, room=request.sid)
             socketio.emit('queue_updated', {'waiting_players': list(waiting_players.keys())}, room=None)
     emit('connection_established', {'message': 'Connected to server'})
 
+
 @socketio.on('join_queue')
 def join_queue(data):
-    username = session.get('username')
-    if username and username not in waiting_players:
-        waiting_players[username] = {
-            'session_id': request.sid,
-            'timestamp': time.time()
-        }
-        emit('queue_joined', {'message': f'Joined queue as {username}'}, room=request.sid)
-        socketio.emit('queue_updated', {'waiting_players': list(waiting_players.keys())}, room=None)
-        check_for_game()
+    user_id = session.get('user_id')
+    if user_id:
+        user = User.query.get(user_id)
+        if user and user.username not in waiting_players:
+            waiting_players[user.username] = {
+                'session_id': request.sid,
+                'timestamp': time.time()
+            }
+            emit('queue_joined', {'message': f'Joined queue as {user.username}'}, room=request.sid)
+            socketio.emit('queue_updated', {'waiting_players': list(waiting_players.keys())}, room=None)
+            check_for_game()
 
 def check_for_game():
     if len(waiting_players) >= 2:
