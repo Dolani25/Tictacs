@@ -4,3 +4,4 @@ flask-cors
 eventlet
 flask-sqlalchemy
 Flask-Session
+psycopg2-binary
