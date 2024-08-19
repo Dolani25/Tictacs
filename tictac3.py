@@ -38,7 +38,7 @@ socketio = SocketIO(app, cors_allowed_origins="*", manage_session=False)
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
-    password_hash = db.Column(db.String(128))
+    password_hash = db.Column(db.String(628))
     profile_pic = db.Column(db.String(255))
     cumulative_score = db.Column(db.Integer, default=0)
     ranking = db.Column(db.Integer)
