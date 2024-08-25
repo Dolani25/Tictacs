@@ -17,7 +17,7 @@ from flask_session import Session
 import os
 
 # Get the Database URL from environment variable
-DATABASE_URL = os.environ.get('DATABASE_URL')
+DATABASE_URL = "postgresql://tictacs_user:m2Gby8gIzlHaYIjslQvivgy8WGJGLh5u@dpg-cr19c0tds78s739qik6g-a.oregon-postgres.render.com/tictacs"
 
 # Ensure the URL starts with 'postgresql://' instead of 'postgres://'
 if DATABASE_URL.startswith("postgres://"):
