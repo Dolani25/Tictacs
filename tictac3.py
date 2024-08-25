@@ -263,5 +263,5 @@ def handle_disconnect():
             del active_games[game_id]
 
 if __name__ == '__main__':
-    socketio.run(app, host='0.0.0.0', port=5000)
+    socketio.run(app, host='0.0.0.0', port=8000)
 
