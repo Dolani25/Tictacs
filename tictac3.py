@@ -17,7 +17,7 @@ from flask_session import Session
 import os
 
 # Get the Database URL from environment variable
-DATABASE_URL = "postgresql://tictacs_user:m2Gby8gIzlHaYIjslQvivgy8WGJGLh5u@dpg-cr19c0tds78s739qik6g-a.oregon-postgres.render.com/tictacs"
+DATABASE_URL = "postgresql://tictacs_f61f_user:oLNWNzuFKBBceszZNQUdfUHn7o2WXIXD@dpg-cr5sbnrqf0us739sgi30-a.oregon-postgres.render.com/tictacs_f61f"
 
 # Ensure the URL starts with 'postgresql://' instead of 'postgres://'
 if DATABASE_URL.startswith("postgres://"):
@@ -38,7 +38,7 @@ socketio = SocketIO(app, cors_allowed_origins="*", manage_session=False)
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
-    password_hash = db.Column(db.String(628))
+    password_hash = db.Column(db.String(400))
     profile_pic = db.Column(db.String(255))
     cumulative_score = db.Column(db.Integer, default=0)
     ranking = db.Column(db.Integer)
