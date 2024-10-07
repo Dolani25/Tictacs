@@ -39,6 +39,7 @@ Session(app)
 
 # Define allowed origins
 allowed_origins = [
+    "*",
     "http://localhost",
     "https://sololearn.com",
     "http://localhost:8000",
