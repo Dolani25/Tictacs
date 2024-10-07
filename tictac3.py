@@ -39,7 +39,6 @@ Session(app)
 
 # Define allowed origins
 allowed_origins = [
-    "*",
     "http://localhost",
     "https://sololearn.com",
     "http://localhost:8000",
@@ -50,13 +49,6 @@ allowed_origins = [
 
 # Configure CORS
 CORS(app, resources={r"/*": {"origins": allowed_origin}}, supports_credentials=True)
-
-# Log the origin for debugging
-@app.before_request
-def log_request_origin():
-    origin = request.headers.get('Origin')
-    print(f"Request Origin: {origin}")
-    print(f"Origin Allowed: {is_allowed_origin(origin)}")
 
 
 db = SQLAlchemy(app)
