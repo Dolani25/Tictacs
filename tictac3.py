@@ -17,7 +17,7 @@ from flask_session import Session
 import os
 
 # Get the Database URL from environment variable
-DATABASE_URL = "postgresql://tictacs_f61f_user:oLNWNzuFKBBceszZNQUdfUHn7o2WXIXD@dpg-cr5sbnrqf0us739sgi30-a.oregon-postgres.render.com/tictacs_f61f"
+DATABASE_URL = "postgresql://tictacs_wipv_user:a7jQzDSum8ro4wgu9hnD680FpGVhEDjF@dpg-cs23u9aj1k6c73blvuo0-a.oregon-postgres.render.com/tictacs_wipv"
 
 # Ensure the URL starts with 'postgresql://' instead of 'postgres://'
 if DATABASE_URL.startswith("postgres://"):
@@ -30,7 +30,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SESSION_TYPE'] = 'filesystem'
 
 Session(app)
-CORS(app, supports_credentials=True)
+CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
 db = SQLAlchemy(app)
 socketio = SocketIO(app, cors_allowed_origins="*", manage_session=False)
 
