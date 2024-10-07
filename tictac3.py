@@ -29,7 +29,14 @@ app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URL
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SESSION_TYPE'] = 'filesystem'
 
+app.config['SESSION_COOKIE_SECURE'] = False
+
+app.config['SESSION_COOKIE_HTTPONLY'] = True
+
+app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
+
 Session(app)
+
 CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
 db = SQLAlchemy(app)
 socketio = SocketIO(app, cors_allowed_origins="*", manage_session=False)
@@ -231,6 +238,7 @@ def get_leaderboard():
 
 @app.route('/profile', methods=['GET'])
 def get_profile():
+    print("session data : " , session)
     user_id = session.get('user_id')
     if not user_id:
         return jsonify({"message": "Not logged in"}), 401
