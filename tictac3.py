@@ -40,18 +40,15 @@ Session(app)
 # Define allowed origins
 allowed_origins = [
     "http://localhost",
+    "https://sololearn.com",
     "http://localhost:8000",
     "http://127.0.0.1:5000"
 ]
 
-def is_allowed_origin(origin):
-    if origin in allowed_origins:
-        return True
-    # Check for any Sololearn origin
-    return origin and origin.endswith('.code.sololearn.com')
+
 
 # Configure CORS
-CORS(app, resources={r"/*": {"origins": is_allowed_origin}}, supports_credentials=True)
+CORS(app, resources={r"/*": {"origins": allowed_origin}}, supports_credentials=True)
 
 # Log the origin for debugging
 @app.before_request
