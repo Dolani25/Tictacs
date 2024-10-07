@@ -48,7 +48,7 @@ allowed_origins = [
 
 
 # Configure CORS
-CORS(app, resources={r"/*": {"origins": allowed_origin}}, supports_credentials=True)
+CORS(app, resources={r"/*": {"origins": allowed_origins}}, supports_credentials=True)
 
 
 db = SQLAlchemy(app)
