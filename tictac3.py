@@ -29,15 +29,38 @@ app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URL
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SESSION_TYPE'] = 'filesystem'
 
-app.config['SESSION_COOKIE_SECURE'] = False
-
 app.config['SESSION_COOKIE_HTTPONLY'] = True
 
-app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
+app.config['SESSION_COOKIE_SECURE'] = True
+
+app.config['SESSION_COOKIE_SAMESITE'] = 'None'
 
 Session(app)
 
-CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
+# Define allowed origins
+allowed_origins = [
+    "http://localhost",
+    "http://localhost:8000",
+    "http://127.0.0.1:5000"
+]
+
+def is_allowed_origin(origin):
+    if origin in allowed_origins:
+        return True
+    # Check for any Sololearn origin
+    return origin and origin.endswith('.code.sololearn.com')
+
+# Configure CORS
+CORS(app, resources={r"/*": {"origins": is_allowed_origin}}, supports_credentials=True)
+
+# Log the origin for debugging
+@app.before_request
+def log_request_origin():
+    origin = request.headers.get('Origin')
+    print(f"Request Origin: {origin}")
+    print(f"Origin Allowed: {is_allowed_origin(origin)}")
+
+
 db = SQLAlchemy(app)
 socketio = SocketIO(app, cors_allowed_origins="*", manage_session=False)
 
