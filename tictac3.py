@@ -33,7 +33,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SESSION_TYPE'] = 'redis'
 app.config['SESSION_PERMANENT'] = False
 app.config['SESSION_USE_SIGNER'] = True
-app.config['SESSION_REDIS'] = redis.from_url('rediss://red-cs2f7956l47c73bgv610:rL7tytoxt0BRjliluRbbScyj1Adhmjv8@oregon-redis.render.com:6379')
+app.config['SESSION_REDIS'] = redis.from_url('redis://red-cs2f7956l47c73bgv610:6379')
 
 app.config['SESSION_COOKIE_HTTPONLY'] = True
 
