@@ -5,3 +5,4 @@ eventlet
 flask-sqlalchemy
 Flask-Session
 psycopg2-binary
+redis

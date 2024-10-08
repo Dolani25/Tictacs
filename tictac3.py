@@ -14,6 +14,7 @@ import time
 import threading
 import base64
 from flask_session import Session
+import redis
 import os
 
 # Get the Database URL from environment variable
@@ -27,7 +28,12 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = '*#Dolani#*'
 app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URL
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['SESSION_TYPE'] = 'filesystem'
+
+# Redis configuration
+app.config['SESSION_TYPE'] = 'redis'
+app.config['SESSION_PERMANENT'] = False
+app.config['SESSION_USE_SIGNER'] = True
+app.config['SESSION_REDIS'] = redis.from_url('rediss://red-cs2f7956l47c73bgv610:rL7tytoxt0BRjliluRbbScyj1Adhmjv8@oregon-redis.render.com:6379')
 
 app.config['SESSION_COOKIE_HTTPONLY'] = True
 
@@ -124,6 +130,7 @@ def login():
     if user and user.check_password(password):
         session['user_id'] = user.id
         session['username'] = user.username
+        session.modified = True
         return jsonify({"message": "Logged in successfully", "user_id": user.id}), 200
     
     return jsonify({"message": "Invalid username or password"}), 401
