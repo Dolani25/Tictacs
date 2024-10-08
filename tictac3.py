@@ -37,18 +37,10 @@ app.config['SESSION_COOKIE_SAMESITE'] = 'None'
 
 Session(app)
 
-# Define allowed origins
-allowed_origins = [
-    "http://localhost",
-    "https://sololearn.com",
-    "http://localhost:8000",
-    "http://127.0.0.1:5000"
-]
-
 
 
 # Configure CORS
-CORS(app, resources={r"/*": {"origins": allowed_origins}}, supports_credentials=True)
+CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
 
 
 db = SQLAlchemy(app)
