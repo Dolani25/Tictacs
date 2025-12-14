@@ -48,7 +48,7 @@ cors_origins = allowed_origins or '*'
 app.config['SESSION_TYPE'] = 'redis'
 app.config['SESSION_PERMANENT'] = False
 app.config['SESSION_USE_SIGNER'] = True
-app.config['SESSION_REDIS'] = redis.from_url('rediss://default:AT_8AAIncDE2YzJkODE3MDY4OTM0Y2I4YTdkYWJiMjJmODlmNzNiY3AxMTYzODA@credible-stinkbug-16380.upstash.io:6379"')
+app.config['SESSION_REDIS'] = redis.from_url('rediss://default:AT_8AAIncDE2YzJkODE3MDY4OTM0Y2I4YTdkYWJiMjJmODlmNzNiY3AxMTYzODA@credible-stinkbug-16380.upstash.io:6379')
 
 app.config['SESSION_COOKIE_HTTPONLY'] = True
 
@@ -389,6 +389,7 @@ def handle_disconnect():
 
 if __name__ == '__main__':
     socketio.run(app, host='0.0.0.0', port=8000)
+
 
 
 
