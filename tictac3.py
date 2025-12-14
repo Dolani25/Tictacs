@@ -28,7 +28,7 @@ def get_random_profile_picture():
 
 
 # Get the Database URL from environment variable
-DATABASE_URL = "postgres://postgres.nqyxyetdnabdfhxfxsms:QjUdNAGhdpcZrTlG@aws-0-us-east-1.pooler.supabase.com:6543/postgres?sslmode=require"
+DATABASE_URL = "postgres://postgres:qnimsMAiQUpBzlrj@db.xunmlrfhlpcyidasalro.supabase.co:5432/postgres"
 
 
 # Ensure the URL starts with 'postgresql://' instead of 'postgres://'
@@ -389,4 +389,5 @@ def handle_disconnect():
 
 if __name__ == '__main__':
     socketio.run(app, host='0.0.0.0', port=8000)
+
 
