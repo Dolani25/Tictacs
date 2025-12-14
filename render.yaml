@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: TicTacs
+    env: python
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "gunicorn -k eventlet -w 1 -b 0.0.0.0:8000 tictac3:app"
+    ports:
+      - 5000:5000
+    envVars:
+      - key: PORT
+        value: 5000

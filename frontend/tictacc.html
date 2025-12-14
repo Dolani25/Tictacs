@@ -1,0 +1,1375 @@
+<!-- Dolani Johnson -->
+
+<!DOCTYPE html>
+<html>
+    <head>
+       <title>Home | Tic-tacs</title>
+<meta name="viewport" content="width = device-width, initial-scale = 1, maximum-scale = 1, minimum-scale = 1, user-scalable = no, minimal-ui"/>
+
+
+<link rel="shortcut icon" href="I.ico" type="image/x-icon">
+
+<meta name="theme-color" content="#6460AA">
+
+<meta property="og:title" content="Tic-Tac : play with friends ">
+
+<meta property="og:description" content="Join Now to experience thrilling and exciting gaming">
+
+<meta property="og:image" content="logo.png">
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+
+        <style>
+        
+* {
+        padding: 0;
+        margin: 0;
+        -webkit-box-sizing: border-box;
+                box-sizing: border-box;
+        border: none;
+        outline: none;
+        font-family: "Poppins", sans-serif;
+      }
+              
+html
+{
+    height: 100vh;
+    width: 100vw;
+}
+body 
+{
+    background: linear-gradient(135deg, #333, #222);
+    height: 100%;
+    width: 100%;
+}
+#main-svg
+{
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.slanted {
+  display: flex;
+  justify-content: space-between;
+  padding:0vh 2vh 0vh 2vh;
+  align-items: center;
+
+position : fixed;
+width : 100vw;
+ background-image: linear-gradient(to left bottom, #f85838, #f95541, #f95349, #f95150, #f85058);
+ height: 13vh; 
+-webkit-clip-path: polygon(0 0, 100% 0, 100% 0%, 0 100%);
+ clip-path: polygon(0 0, 100% 0, 100% 66%, 0 100%); }
+
+.slanted2 {
+  display: flex;
+  justify-content: space-between;
+  padding:0vh 2vh 0vh 2vh;
+  align-items: center;
+position : fixed;
+bottom : 0;
+left : 0;
+width : 100vw;
+ background-image: linear-gradient(to left top, #08b8c8, #0abeca, #10c4cd, #17cace, #20d0d0);
+ height: 13vh; 
+clip-path: polygon(0% 33.4%, 100% 0%, 100% 100%, 0% 100%);
+}
+ 
+ .won{
+     z-index : 200;
+     height : 9vh;
+     width : 9vh;
+     border-radius : 50%;
+     background : #f1f1f1;
+ }
+
+#roundsWon1{
+    border : 6px solid  #f85838;
+    margin-bottom : 4vh;
+    display:none;
+    padding:0;
+    
+}
+
+#roundsWon2{
+     border : 6px solid #08b8c8;
+     margin-top:4vh;
+     padding:0;
+     
+}
+
+#name2,#name1{
+  color:white;
+  font-weight:800;
+  font-size: 25px;
+}
+
+#name1{
+  display:none;
+}
+
+
+.intro{
+    color : #f1f1f1;
+    text-align : center;
+    height : 100vh;
+    width : 100vw;
+    position : fixed;
+    padding-top : 7vh;
+    padding-bottom : 5vh;
+    z-index : 1000;
+ 
+    
+background: transparent;
+
+    
+}
+
+canvas{
+     color : #f1f1f1;
+    text-align : center;
+    width : 100vw;
+    position : fixed;
+    z-index : 999;
+    
+background: #f85058;
+background: -webkit-linear-gradient(0deg, #f85058 0%, #f85838 100%);
+background: linear-gradient(0deg, #f85058 0%, #f85838 100%);
+
+    
+}
+
+h2{
+    @import url('https://fonts.googleapis.com/css?family=Grand+Hotel');
+   /* font-family : "Grand Hotel" , cursive;*/
+    font-size : 203%;
+    font-weight : bolder;
+    margin-bottom : 9vh;
+}
+
+button{
+    background : #F1F1F1;
+    color : #606070;
+    width : 80%;
+    padding : 3.4vh;
+    margin-bottom : 5.3vh;
+    outline : none;
+    border-radius : 5px;
+    font-size : 99%;
+    letter-spacing : 3px;
+    border : none;
+    font-weight : 600;
+}
+
+#exit , #createAcc ,#signin, #openLeaderBd, #closeLeaderBd{
+    background: #584068;
+background: -webkit-linear-gradient(0deg, #584068 0%, #bc48ff 100%);
+background: linear-gradient(0deg, #584068 0%, #bc48ff 100%);
+color : #f1f1f1;
+}
+
+    .login{
+        width: 95vw !important;
+        position: fixed;
+        -webkit-transform: translate(-50%, -50%);
+            -ms-transform: translate(-50%, -50%);
+                transform: translate(-50%, -50%);
+        left: 50%;
+        top: 50%;
+        z-index : 500;
+        background  : #ffffff;
+        border-radius : 5px;
+      }
+      
+            .wrapper2 {
+        width: 100%;
+        background-color: #ffffff;
+        padding: 30px 15px 0 15px;
+        border-radius: 8px;
+        -webkit-box-shadow: 0 10px 25px rgba(60, 60, 100, 0.35);
+                box-shadow: 0 10px 25px rgba(60, 60, 100, 0.35);
+      }
+      #closeBtn{
+          position : absolute;
+          height : 60px;
+          width : 60px;
+          top : -28px;
+          right : -28px;
+          background : #ffffff;
+          color : grey;
+          border-radius : 50%;
+          font-size : 50px;
+=          text-align : center;
+          box-shadow: 0 10px 25px rgba(60, 60, 100, 0.35);
+      }
+      
+.filter, #leaderboard{
+    color : #101010;
+    height : 100vh;
+    width : 100vw;
+    position : fixed;
+    z-index : 2000;
+    display : none;
+    text-align : center;
+    background : rgba(0,0,0,0.6);
+    padding : 0;
+}
+
+#leaderboard{
+  background: #f85058;
+background: -webkit-linear-gradient(0deg, #f85058 0%, #f85838 100%);
+background: linear-gradient(0deg, #f85058 0%, #f85838 100%);
+padding-top:2vh;
+}
+
+input[type=text] , input[type=password] {
+        background-color: #f1f5fc;
+        font-size: 4vmin;
+        font-weight: 400;
+        color: #3f415f;
+        width: 100%;
+        padding: 15px 10px;
+        border-radius: 5px;
+        margin: 20px 0 0 0;
+        margin-bottom : 5.3vh;
+        border : none;
+      }
+      
+      .tab{
+    display:-webkit-box;
+    display:-ms-flexbox;
+    display:flex;
+    width:100%;
+    overflow-x:scroll;
+    line-height:10px;
+    height:34px;
+    color: #101010;
+    overflow-y:hidden ;
+    margin-bottom: 4vh;
+    background-color: inherit;
+     font-size : 15px;
+    z-index : 600;
+}
+label{
+  position: absolute;
+  left:10%;
+  
+}
+.tab div{
+    width:48%;
+}
+.tab > div > div {
+      display:block;
+      margin-left:auto;
+      margin-right:auto;
+      line-height:23.6px;
+      text-align:center;
+      font-weight:bolder ;
+}
+
+.choosen{
+     border-bottom: 2px solid #f85058;
+
+     color: #f85058;
+}
+
+    .profile{
+    color : #101010;
+    height : 100vh;
+    width : 100vw;
+    position : fixed;
+    z-index : 900;
+    display : non6e;
+    text-align : center;
+    background : #f1f1f1;
+    padding : 0;
+}
+
+.coverGrad{
+    background-image: linear-gradient(to left top, #a890f0, #bc99ef, #cda2ef, #dbadef, #e8b8f0);
+    width : 100vw;
+    padding : 7vh 1vh;
+    color : #f1f1f1;
+}
+
+.profilePic{
+    height : 18vh;
+    width : 18vh;
+    border-radius : 50%;
+    margin-bottom : 1.3vh;
+}
+
+.info{
+        background-color: #f1f1f1;
+        -webkit-box-shadow: 0 20px 25px rgba(60, 60, 100, 0.15);
+                box-shadow: 0 20px 25px rgba(60, 60, 100, 0.15);
+                
+        display: flex;
+        justify-content : space-between;
+        text-align: center;
+        padding: 5px 0;
+        border-radius: 30px;
+        position : relative;
+        bottom : -105px;
+        -webkit-transform: translate(-50%, -50%);
+            -ms-transform: translate(-50%, -50%);
+                transform: translate(-50%, -50%);
+        left: 50%;
+        width: 80vmin;
+        color: #D0D0D8;
+        font-weight: bold;
+        font-size : 3vmin;
+      }
+      
+      .info button {
+        background-color: inherit;
+        padding: 10px;
+        color: #282830;
+        font-size: 3vmin;
+        font-weight: 700;
+        margin : 0;
+        border-radius : 30px;
+      }
+      
+           .loading::before{
+    color:white;
+    content:"Loading";
+    animation:animate2 2s infinite;
+}
+
+@keyframes animate2{
+    0%{
+        content:"Loading";
+    }
+    25%{
+        content:"Loading.";
+    }
+    50%{
+        content:"Loading..";
+    }
+    75%{
+        content:"Loading...";
+    }
+    100%{
+        content:"Loading...";
+    }
+    
+}
+
+#toGame, #anotherGame{
+  display: flex;
+  align-items: center;
+  justify-content:center;
+  margin-top:30vh;
+  padding:16px 0px 16px 0px;
+  width:85%;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  border-radius:8px;
+  color:white;
+  background:#101010;
+}
+
+#anotherGame{
+  position : fixed;
+bottom : 14vh;
+left : 8%;
+display:none;
+  background: orange;
+}
+
+#game-status{
+  padding:1vh;
+  color:white;
+  font-size:17px;
+  font-weight:800;
+  display: none;
+}
+
+li{
+  margin:2vh 4vh 2vh 4vh;
+  font-size:130%;
+  font-weight: 700;
+}
+
+#player1 , #player2{
+  height:7.2vh;
+  width: 7.2vh;
+  border-radius:50%;
+  margin:0;
+}
+        </style>
+    </head>
+    <body>
+        <div id="game-status"></div>
+        <svg id="main-svg" height="200" width="200">
+            <line x1="66.66" y1="0" stroke="white" x2="66.6" y2="200"></line>
+           <line x1="133.32" y1="0" stroke="white" x2="133.32" y2="200"></line>
+           <line y1="66.66" x1="0" stroke="white" y2="66.6" x2="200"></line>
+           <line y1="133.32" x1="0" stroke="white" y2="133.32" x2="200"></line>
+           <use href="#x-symb" x="66.67" y="66.67"/>
+           <use href="#o-symb"/>
+           <use href="#x-symb" x="0" y="133.34"/>
+           <use href="#o-symb" x="66.67" y="133.34"/>
+           <use href="#x-symb" x="133.34" y="0"/>
+           
+           <!-- Winner Line -->
+           <line id="winLine" x1="200" y1="0" x2="0" y2="200" stroke="white" stroke-dashoffset="282.84" stroke-dasharray="282.84">
+                                     <animate attributeName="stroke-dashoffset"
+                      to="0"
+                      dur=".5s"
+                      fill="freeze"
+                      begin="2s"
+                      >
+           </line>
+           
+           <!-- Definitions -->
+           <defs>
+              <!-- X Symbole --> 
+              <svg id="x-symb" height="66.66" width="66.66">
+                  <line x1="20" x2="46.66" y1="20" y2="46.66" stroke="hsl(0, 100%, 70%)" stroke-width="2" stroke-dasharray="37.70" stroke-dashoffset="37.70">
+                      <animate attributeName="stroke-dashoffset"
+                      to="0"
+                      dur=".5s"
+                      fill="freeze"
+                      >
+                          
+                      </animate>
+                  </line>
+                  <line y1="20" y2="46.66" x1="46.66" x2="20" stroke="hsl(0, 100%, 70%)" stroke-width="2" stroke-dasharray="37.70" stroke-dashoffset="37.70">
+                                         <animate attributeName="stroke-dashoffset"
+                      to="0"
+                      dur=".5s"
+                      fill="freeze"
+                      begin=".5s"
+                      >  
+                  </line>
+              </svg>
+              
+              <!-- O Symbole --> 
+              <svg id="o-symb" height="66.66" width="66.66">
+              <circle  r="13.33" cx="33.33" cy="33.33" fill="none" stroke-width="2" stroke="hsl(240, 100%, 70%)"
+              stroke-dasharray="83.75"
+              stroke-dashoffset="83.75"
+              >
+                                        <animate attributeName="stroke-dashoffset"
+                      to="0"
+                      dur=".5s"
+                      fill="freeze"
+                      begin="1s"
+                      >
+              </circle>
+              </svg>
+           </defs>
+        </svg>
+        
+
+    
+    
+
+    <div id="leaderboard" style="display:none; padding:2vh; color:white;" id="leaderboard">
+        <h2>Leaderboard</h2>
+        <ol id="leaderboard-list"></ol>
+        <button id="closeLeaderBd" style="position : fixed;bottom : 6vh;left : 9.5%;"onclick="javascript:document.querySelector('#leaderboard').style.display='none';">Close Leaderboard</button>
+    </div>
+        
+        <div class="slanted">
+          <span id="name1"></span>
+            <div class="won" id="roundsWon1">
+            <img id="player1" src="" alt="player1"/></div>
+            
+        </div> 
+        <button id="anotherGame">Play Another Game</button>
+        <button id="openLeaderBd" style="position : fixed; display:none;margin-top:2vh;top: 17vh;left : 9.5%;"onclick="javascript:document.querySelector('#leaderboard').style.display='block';">Leaderboard</button>
+    
+         <div class="slanted2">
+             <div onclick="javascript:document.querySelector('.profile').style.display='block';" class="won" id="roundsWon2">
+              <img id="player2" src="" alt="player2"/></div>
+              <span id="name2"></span>
+         </div> 
+         
+         <!-- C A N V A S -->
+         
+         <canvas id="can"></canvas>
+         
+         <!-- I N T R O. P A G E-->
+         
+         <div class="intro">
+         
+             <h2>T i c <span style="color:#584068;">-</span> T a c s</h2>
+             
+             <button id="singPlay">SINGLE PLAYER</button>
+             
+              <button id="multPlay">MULTI PLAYER</button>
+              
+                <button onclick="test();">OPTIONS</button>
+                
+                <button id="exit">EXIT</button>
+                
+                <p>© Dolani <span style="color:#584068;">ALL RIGHTS RESERVED</span></p>
+             
+             
+         </div>
+         
+               <!--F I L T E R &  L O G I N --D I V -->
+               
+         <div class="filter">
+               
+         <div id="login" class="login">
+         <div id="closeBtn">×</div>
+         <div class="wrapper2">
+         
+          <!-- T A B -->
+                <div class="tab">
+                    <div class="choosen" onclick="showSignIn()" id="signin-tab">
+                        <div id="for-you">SIGN IN</div>        
+                    </div>
+                    
+                    <div onclick="showSignUp()" id="signup-tab">
+                        <div class="top-charts">SIGN UP</div>
+                    </div>
+                </div>
+                
+                <!-- Sign In Form -->
+                <div id="signin-form">
+                    <label>Username</label>
+                    <input autocomplete="off" type="text" id="signin-username" />
+                    <label>Password</label>
+                    <input type="password" id="signin-password" />
+                    <button style="width:100%;" id="signin">SIGN IN</button>
+                </div>
+
+                <!-- Sign Up Form -->
+                <div id="signup-form" style="display:none;">
+                    <label>Username</label>
+                    <input autocomplete="off" type="text" id="signup-username" />
+                    <label>Password</label>
+                    <input type="password" id="signup-password" />
+                    <button style="width:100%;" id="createAcc">CREATE ACCOUNT</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+  
+        
+         
+        
+
+    <!-- P R O F I L E -->
+    
+    <div style="display:none;" class="profile">
+        
+        <div class="coverGrad">
+           
+            <img class="profilePic" src="" alt="UserDP"/>
+            <h3 id="username">Dolani johnson</h3>
+            
+            <!-- I N F O -->
+            <div class="info">
+                   <button><span id="games">35</span><br>Games</button>
+                   <button><span id="score">103</span><br>Score</button>
+                   <button><span id="rank">8</span><br>Ranking</button>
+                   
+            </div>
+            
+          
+        </div>
+         <button id="toGame">Play Game</button>
+    </div>
+      
+    
+         
+         
+        
+        <!-- S C R I P T -->
+        
+            <script>
+      const singPlayer = document.querySelector("#singPlay");
+      
+      const filter = document.querySelector(".filter");
+      
+      const intro = document.querySelector(".intro");
+      
+      const multPlayer = document.querySelector("#multPlay");
+      
+      const createAcc = document.querySelector("#createAcc");
+      
+      const playGame = document.querySelector("#toGame");
+      
+      const anotherGame = document.querySelector("#anotherGame");
+      
+      const leaderBtn = document.querySelector("#openLeaderBd");
+            
+      const name1 = document.querySelector("#name1");       
+            
+      const login = document.querySelector("#login");
+      
+      const exit = document.querySelector("#exit");
+      
+      const profilePic = document.querySelector(".profilePic");
+      
+      const profile = document.querySelector(".profile");
+      
+      const canvas = document.querySelector("#can");
+      
+      const ctx = canvas.getContext("2d");
+      
+      document.querySelector("#closeBtn").addEventListener("click", ()=>{
+        login.style.display = "none";
+        filter.style.display = "none";
+      });
+      
+      function test(){
+        login.style.display = "none";
+        filter.style.display = "none";
+        intro.style.display = "none";
+        profile.style.display = "none";
+        canvas.style.display = "none";
+        filter.style.display = "none";
+        document.querySelector("#leaderboard").style.display="block";
+      }
+      
+      
+       cw = canvas.width;
+            ch = canvas.height = window.screen.availHeight;
+            
+            const PI = Math.PI;
+            
+            class Circle {
+    constructor() {
+        this.posX = Math.floor(Math.random() * cw);
+        this.posY = Math.floor(Math.random() * ch);
+        this.vx = -1;
+        this.vy = Math.floor(Math.random() * 2 + 1);
+        this.r = Math.random() * 15 + 10;
+        this.color = "blue";
+    }
+
+    draw() {
+        ctx.strokeStyle = this.color;  // Use the instance's color
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.arc(this.posX, this.posY, this.r, 0, Math.PI * 2);
+        ctx.stroke();
+    }
+
+    move() {
+        this.posX += this.vx;
+        this.posY += this.vy;
+        this.checkCollision();
+    }
+
+    checkCollision() {
+        if (this.posX < 0 || this.posX > cw) {
+            this.vx = -this.vx;
+            this.changeColor();
+        }
+        if (this.posY < 0 || this.posY > ch) {
+            this.vy = -this.vy;
+            this.changeColor();
+        }
+    }
+
+    changeColor() {
+        this.color = '#' + Math.floor(Math.random() * 16777215).toString(16);
+    }
+}
+            
+            
+            
+            class Triangle {
+    constructor() {
+        this.posX = Math.floor(Math.random() * cw);
+        this.posY = Math.floor(Math.random() * ch);
+        this.vx = -1;
+        this.vy = Math.floor(Math.random() * 2 + 1);
+        this.w = this.h = Math.random() * 30 + 10;
+        this.color = "blue";
+    }
+    
+    draw() {
+        ctx.strokeStyle = this.color;  // Use strokeStyle instead of fillStyle
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.moveTo(this.posX, this.posY);
+        ctx.lineTo(this.posX + this.w / 2, this.posY + this.h);
+        ctx.lineTo(this.posX - this.w / 2, this.posY + this.h);
+        ctx.closePath();
+        ctx.stroke();
+    }
+    
+    move() {
+        this.posX += this.vx;
+        this.posY += this.vy;
+        this.checkCollision();
+    }
+
+    checkCollision() {
+        if (this.posX < this.w / 2 || this.posX > cw - this.w / 2) {
+            this.vx = -this.vx;
+            this.changeColor();
+        }
+        if (this.posY < 0 || this.posY > ch - this.h) {
+            this.vy = -this.vy;
+            this.changeColor();
+        }
+    }
+    
+    changeColor() {
+        this.color = '#' + Math.floor(Math.random() * 16777215).toString(16);
+    }
+}
+         
+            class Square{
+                constructor(){
+                    this.posX = Math.floor(Math.random()*cw);
+                    this.posY = Math.floor(Math.random()*ch);
+                    this.vx = -1;
+                    this.vy = Math.floor(Math.random()*2 + 1);
+                    this.w =  this.h =Math.random()*30 +10;
+                    this.color = "blue";
+                }
+                
+                draw(){
+                    ctx.strokeStyle = this.color ;
+                    ctx.lineWidth = 3;
+                    ctx.beginPath();
+                    ctx.rect(this.posX , this.posY , this.w , this.h);
+                    ctx.stroke();
+                }
+                
+                move(){
+                        this.posX += this.vx;
+                        this.posY += this.vy;
+                        this.checkCollision();
+                }
+                checkCollision(){
+                    if (this.posX < 0 || this.posX  > cw) {
+                        this.vx = -this.vx;
+                        this.changeColor();
+                    }
+                    if (this.posY < 0 || this.posY > ch) {
+                        this.vy = -this.vy;
+                        this.changeColor();
+                    }
+                        
+                }
+                 changeColor(){
+                    this.color = '#'+Math.floor(Math.random() * 16777215).toString(16);
+                    
+                }
+                
+            }
+            
+            //new Shapes
+            class Cross {
+    constructor() {
+        this.posX = Math.floor(Math.random() * cw);
+        this.posY = Math.floor(Math.random() * ch);
+        this.vx = -1;
+        this.vy = Math.floor(Math.random() * 2 + 1);
+        this.size = Math.random() * 15 + 10;
+        this.color = "red";
+    }
+
+    draw() {
+        ctx.strokeStyle = this.color;
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.moveTo(this.posX - this.size, this.posY);
+        ctx.lineTo(this.posX + this.size, this.posY);
+        ctx.moveTo(this.posX, this.posY - this.size);
+        ctx.lineTo(this.posX, this.posY + this.size);
+        ctx.stroke();
+    }
+
+    move() {
+        this.posX += this.vx;
+        this.posY += this.vy;
+        this.checkCollision();
+    }
+
+    checkCollision() {
+        if (this.posX < this.size || this.posX > cw - this.size) {
+            this.vx = -this.vx;
+            this.changeColor();
+        }
+        if (this.posY < this.size || this.posY > ch - this.size) {
+            this.vy = -this.vy;
+            this.changeColor();
+        }
+    }
+
+    changeColor() {
+        this.color = '#' + Math.floor(Math.random() * 16777215).toString(16);
+    }
+}
+
+class Star {
+    constructor() {
+        this.posX = Math.floor(Math.random() * cw);
+        this.posY = Math.floor(Math.random() * ch);
+        this.vx = -1;
+        this.vy = Math.floor(Math.random() * 2 + 1);
+        this.outerRadius = Math.random() * 15 + 10;
+        this.innerRadius = this.outerRadius / 2;
+        this.spikes = 5;
+        this.color = "yellow";
+    }
+
+    draw() {
+        ctx.fillStyle = this.color;
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.moveTo(this.posX, this.posY - this.outerRadius);
+
+        for (let i = 0; i < this.spikes * 2; i++) {
+            let radius = i % 2 === 0 ? this.outerRadius : this.innerRadius;
+            let angle = (Math.PI * i) / this.spikes;
+            let x = this.posX + Math.cos(angle) * radius;
+            let y = this.posY + Math.sin(angle) * radius;
+            ctx.lineTo(x, y);
+        }
+
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+    }
+
+    move() {
+        this.posX += this.vx;
+        this.posY += this.vy;
+        this.checkCollision();
+    }
+
+    checkCollision() {
+        if (this.posX < this.outerRadius || this.posX > cw - this.outerRadius) {
+            this.vx = -this.vx;
+            this.changeColor();
+        }
+        if (this.posY < this.outerRadius || this.posY > ch - this.outerRadius) {
+            this.vy = -this.vy;
+            this.changeColor();
+        }
+    }
+
+    changeColor() {
+        this.color = '#' + Math.floor(Math.random() * 16777215).toString(16);
+    }
+}
+            
+            
+            var Shapes = [];
+            
+            
+            var ball = new Circle();
+            var frame = new Square();
+            var tri = new Triangle();
+            var x = new Cross();
+            var ball2 = new Circle();
+            var frame2 = new Square();
+            var tri2 = new Triangle();
+            var x2 = new Cross();
+            var ball3 = new Circle();
+            var frame3 = new Square();
+            var tri3 = new Triangle();
+            var x3 = new Cross();
+            var ball4 = new Circle();
+            var frame4 = new Square();
+            var tri4 = new Triangle();
+            var x4 = new Cross();
+            var ball5 = new Circle();
+            var frame5 = new Square();
+            var tri5 = new Triangle();
+            var x5 = new Cross();
+            var ball6 = new Circle();
+            var frame6 = new Square();
+            var tri6 = new Triangle();
+            var x6 = new Cross();
+            var star1 = new Star();
+            var star2  = new Star();
+            var star3  = new Star();
+            var star4  = new Star();
+            var star5  = new Star();
+            var star6 = new Star();
+            
+            Shapes.push(ball, frame, tri, tri2, tri3, tri4, tri5,  ball2, frame2, ball3, frame3, ball4, frame4, ball5, frame5,  x, x2, x3, x4, x5, star1,star2,star3,star4,star5 );
+            
+            requestAnimationFrame(animate );
+            function animate(){
+                ctx.clearRect(0,0, cw , ch);
+                for(var i = 0; i < 25; i++){
+                    Shapes[i].draw();
+                    Shapes[i].move();
+                 //ctx.strokeRect(0,0, cw , ch);
+                 }
+                requestAnimationFrame(animate );
+            }
+            
+        
+      
+      
+      
+      
+      
+      multPlayer.addEventListener("click" , ()=>{
+          filter.style.display = "block";
+          login.style.display = "block";
+      });
+      singPlayer.addEventListener("click" , ()=>{
+          filter.style.display = "block";
+      });    
+    
+      exit.addEventListener("click" , ()=>{
+          Window.close();
+      });
+      
+      createAcc.addEventListener("click" , ()=>{
+          
+          createAcc.innerText = "";
+          createAcc.classList.add("loading");
+         
+      });
+      
+      playGame.addEventListener("click" , ()=>{
+          profile.style.display = "none";
+      });
+      
+      
+      
+      var uid = document.querySelector("#signup-username").value;
+      
+
+
+// DOM Elements
+
+
+const signInForm = document.getElementById('signin-form');
+const signUpForm = document.getElementById('signup-form');
+const signInBtn = document.getElementById('signin');
+
+// Show Sign In form
+function showSignIn() {
+  document.querySelector("#signup-tab").classList.remove("choosen");
+    document.querySelector("#signin-tab").classList.add("choosen");
+    signInForm.style.display = 'block';
+    signUpForm.style.display = 'none';
+}
+
+// Show Sign Up form
+function showSignUp() {
+  document.querySelector("#signin-tab").classList.remove("choosen");
+   document.querySelector("#signup-tab").classList.add("choosen");
+    signInForm.style.display = 'none';
+    signUpForm.style.display = 'block';
+}
+
+// Sign In
+signInBtn.addEventListener('click', () => {
+    
+    const username = document.getElementById('signin-username').value.trim();
+    const password = document.getElementById('signin-password').value.trim();
+    signInBtn.innerHTML="";
+    signInBtn.classList.add("loading");
+    fetch('https://tictac-r424.onrender.com/login', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username, password }), credentials: 'include'
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.message === 'Logged in successfully') {
+        fetchUserProfile();
+            login.style.display="none";
+                filter.style.display ="none";
+                intro.style.display = "none";
+                canvas.style.display = "none";
+                currentPlayer = username;
+                try {
+                    localStorage.setItem('user_id', data.user_id);
+                } catch (e) {}
+                
+                document.querySelector("#name2").innerHTML=currentPlayer;
+                joinQueueButton.disabled = false;
+                initializeSocket(data.user_id);
+            
+        } else {
+            alert(data.message);
+                signInBtn.innerText = "SIGN IN";
+          signInBtn.classList.remove("loading");
+            }
+        }
+    ).catch(error => {
+        console.error('Error:', error);
+        login.style.display ="block";
+            intro.style.display = "block";
+            canvas.style.display = "block";
+ filter.style.display="block";
+            alert('Failed to authenticate user. Please try again.');
+    });
+});
+
+// Fetch user profile
+function fetchUserProfile() {
+    fetch('https://tictac-r424.onrender.com/profile' , {
+        credentials: 'include'
+    })
+    .then(response => response.json())
+    .then(data => {
+        document.getElementById('username').textContent = data.username;
+        document.querySelector('.profilePic').src = `${data.profile_pic}`;
+        
+        document.querySelector('#player2').src = `${data.profile_pic}`;
+        document.getElementById('games').textContent = data.total_games_played;
+        document.getElementById('score').textContent = data.cumulative_score;
+        document.getElementById('rank').textContent = data.ranking;
+        profile.style.display = 'block';
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Failed to load profile. Please try again.');
+    });
+}
+
+
+
+
+// any of these backends would work (pythonanywhere throwing error)
+
+/*
+http://changing-elenore-dolani-dd995c7f.koyeb.app
+
+https://tictacs2.vercel.app
+
+https://tictacs.render.com
+https://tictac-r424.onrender.com/leaderboard
+*/
+/* NOTE : every other backend throwing error due to new changes*/
+
+const BACKEND_URL = 'https://tictac-r424.onrender.com';
+let socket;
+let currentPlayer;
+let currentGameId;
+
+// DOM Elements
+const usernameInput = document.querySelector("#signup-username"); //document.getElementById('username-input');
+//alert(usernameInput)
+const joinQueueButton = document.getElementById('toGame');
+const gameBoard = document.getElementById('main-svg');
+const gameStatus = document.getElementById('game-status');
+const leaderboardList = document.getElementById('leaderboard-list');
+
+// Event Listeners
+createAcc.addEventListener('click', registerUser);
+joinQueueButton.addEventListener('click', joinQueue);
+anotherGame.addEventListener('click', joinQueue);
+
+// User Registration
+async function registerUser() {
+    const username = usernameInput.value.trim();
+    const password = document.getElementById('signup-password').value;
+  
+    if (username) {
+        try {
+            const response = await fetch(`${BACKEND_URL}/register`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ username, password}),
+            });
+            
+            const data = await response.json();
+            if (response.ok){
+                alert(data.message + "\nplease Sign in");
+                showSignIn();
+                
+                
+            } else {
+               alert(data.message);
+                createAcc.innerText = "CREATE ACCOUNT";
+          createAcc.classList.remove("loading");
+            }
+        } catch (error) {
+            console.log('Error registering user:', error);
+            login.style.display ="block";
+            intro.style.display = "block";
+            canvas.style.display = "block";
+ filter.style.display="block";
+            alert('Failed to register user. Please try again.');
+            createAcc.innerText = "CREATE ACCOUNT";
+          createAcc.classList.remove("loading");
+        }
+    } else {
+        alert('Please enter a valid username.');
+        createAcc.innerText = "CREATE ACCOUNT";
+          createAcc.classList.remove("loading");
+    }
+}
+
+// Initialize Socket Connection
+function initializeSocket(user_id) {
+    socket = io(BACKEND_URL, {
+        withCredentials: true,
+        transports: ['websocket', 'polling']
+    });
+
+    socket.on('connect', () => {
+        console.log('Connected to server');
+        if (user_id) {
+            socket.emit('authenticate', { user_id: user_id, username: currentPlayer });
+        } else if (currentPlayer) {
+            socket.emit('authenticate', { username: currentPlayer });
+        }
+    });
+    socket.on('connection_established', (data) => {
+    console.log(data.message);
+    // You might want to enable UI elements or show a connected status
+});
+
+socket.on('queue_updated', (data) => {
+    updateQueueDisplay(data.waiting_players);
+});
+
+function updateQueueDisplay(waitingPlayers) {
+//alert(waitingPlayers);
+    // i should update UI to show the current list of waiting players,but im lazy 
+    // This could be a list or a count of players in the queue
+}
+
+socket.on('queue_left', (data) => {
+    console.log(data.message);
+//alert(data.message);
+    // i should probably update the UI to reflect that a player left the queue
+});
+
+socket.on('queue_join_failed', (data) => {
+    console.error('Failed to join queue:', data.message);
+    // Display an error message to the user
+});
+
+socket.on('move_failed', (data) => {
+    console.error('Move failed:', data.message);
+    // Revert the move in the UI or show an error message
+});
+
+
+    socket.on('game_start', handleGameStart);
+    socket.on('move_made', handleMoveMade);
+    socket.on('next_turn', handleNextTurn);
+    socket.on('game_over', handleGameOver);
+
+
+    socket.on('disconnect', () => {
+        console.log('Disconnected from server');
+    });
+}
+
+
+
+// Join Game Queue
+function joinQueue() {
+    if (currentPlayer) {
+        if (!socket || !socket.connected) {
+            displayMessage('Connecting to server...');
+            return;
+        }
+        anotherGame.style.display = "none";
+        leaderBtn.style.display="none";
+        document.querySelector("#roundsWon1").style.display="none";
+    name1.style.display="none";
+        gameStatus.style.display="block";
+        socket.emit('join_queue', { username: currentPlayer });
+        displayMessage('Waiting for an opponent...');
+        joinQueueButton.disabled = true;
+    } else {
+        alert('Please register first.');
+    }
+}
+
+// Handle Game Start
+function handleGameStart(data) {
+    currentGameId = data.game_id;
+    document.querySelector("#roundsWon1").style.display="block";
+    name1.style.display="block";
+    name1.innerHTML=data.opponent;
+    document.querySelector('#player1').src = `${data.opponent_profile_pic}`;
+    displayMessage(`Game started! You are playing against ${data.opponent}`);
+    resetGameBoard();
+    if (data.your_turn) {
+        gameStatus.textContent += '. Your turn!';
+    } else {
+        gameStatus.textContent += ". Opponent's turn.";
+    }
+}
+
+
+
+// Reset Game Board
+function resetGameBoard() {
+    const uses = gameBoard.querySelectorAll('use');
+    uses.forEach(use => use.remove());
+    
+    for (let i = 0; i < 9; i++) {
+        const x = (i % 3) * 66.67;
+        const y = Math.floor(i / 3) * 66.67;
+        const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+        rect.setAttribute("x", x);
+        rect.setAttribute("y", y);
+        rect.setAttribute("width", "66.66");
+        rect.setAttribute("height", "66.66");
+        rect.setAttribute("fill", "transparent");
+        rect.dataset.index = i;
+        rect.addEventListener('click', () => makeMove(i));
+        gameBoard.appendChild(rect);
+    }
+
+    // Hide the winner line
+    const winnerLine = gameBoard.querySelector('line[id="winLine"]');
+    winnerLine.style.display = 'none';
+}
+
+// Make a Move
+function makeMove(position) {
+    if (currentGameId) {
+        socket.emit('make_move', {
+            game_id: currentGameId,
+            player: currentPlayer,
+            position: position
+        });
+    }
+}
+
+// Handle Move Made
+function handleMoveMade(data) {
+    const x = (data.position % 3) * 66.67;
+    const y = Math.floor(data.position / 3) * 66.67;
+    const use = document.createElementNS("http://www.w3.org/2000/svg", "use");
+    use.setAttribute("href", data.player === currentPlayer ? "#x-symb" : "#o-symb");
+    use.setAttribute("x", x);
+    use.setAttribute("y", y);
+    gameBoard.appendChild(use);
+}
+
+// Handle Next Turn
+function handleNextTurn(data) {
+    if (data.player === currentPlayer) {
+        displayMessage('Your turn!');
+    } else {
+        displayMessage("Opponent's turn.");
+    }
+}
+
+function displayMessage(data){
+  gameStatus.textContent = data
+}
+
+// Handle Game Over
+function handleGameOver(data){
+  
+    if (data.winner === 'draw') {
+        displayMessage("It's a draw!");
+    } else if (data.winner === currentPlayer) {
+        showWinnerLine(data.winningCombination);
+        displayMessage("You won!");
+    } else {
+      showWinnerLine(data.winningCombination);
+        displayMessage(`${data.winner} won!`);
+    }
+    
+    if (data.reason === 'disconnect') {
+      alert("disconn");
+        displayMessage(`${data.winner} won due to opponent disconnection.`);
+    }
+    
+    currentGameId = null;
+    joinQueueButton.disabled = false;
+    anotherGame.style.display = "block";
+    leaderBtn.style.display="block";
+    fetchUserProfile();
+    updateLeaderboard();
+    
+    // Disable the game board or show a "play again" button
+}
+
+// Show Winner Line
+
+function showWinnerLine(winningCombination) {
+    const winnerLine = gameBoard.querySelector('line[id="winLine"]');
+    const startCell = winningCombination[0];
+    const endCell = winningCombination[2];
+    
+    const cellSize = 66.67;
+    const boardSize = cellSize * 3;
+    
+    let startX, startY, endX, endY;
+    
+    // Determine if it's a row, column, or diagonal win
+    if (Math.floor(startCell / 3) === Math.floor(endCell / 3)) {
+        // Row win
+        startX = -cellSize * 0.1;
+        endX = boardSize + cellSize * 0.1;
+        startY = endY = (Math.floor(startCell / 3) + 0.5) * cellSize;
+    } else if (startCell % 3 === endCell % 3) {
+        // Column win
+        startX = endX = ((startCell % 3) + 0.5) * cellSize;
+        startY = -cellSize * 0.1;
+        endY = boardSize + cellSize * 0.1;
+    } else {
+        // Diagonal win
+        if (startCell === 0) {
+            // Top-left to bottom-right diagonal
+            startX = startY = -cellSize * 0.1;
+            endX = endY = boardSize + cellSize * 0.1;
+        } else {
+            // Top-right to bottom-left diagonal
+            startX = boardSize + cellSize * 0.1;
+            startY = -cellSize * 0.1;
+            endX = -cellSize * 0.1;
+            endY = boardSize + cellSize * 0.1;
+        }
+    }
+    
+    winnerLine.setAttribute('x1', startX);
+    winnerLine.setAttribute('y1', startY);
+    winnerLine.setAttribute('x2', endX);
+    winnerLine.setAttribute('y2', endY);
+    
+    winnerLine.style.display = 'block';
+    winnerLine.querySelector('animate').beginElement();
+}
+
+// Update Leaderboard
+async function updateLeaderboard() {
+    try {
+        const response = await fetch(`${BACKEND_URL}/leaderboard`);
+        const leaderboard = await response.json();
+        leaderboardList.innerHTML = '';
+        leaderboard.forEach((entry, index) => {
+            const listItem = document.createElement('li');
+            listItem.textContent = `${entry[0]}: ${entry[1]} wins`;
+            leaderboardList.appendChild(listItem);
+        });
+    } catch (error) {
+        console.error('Error fetching leaderboard:', error);
+    }
+}
+
+// Initial leaderboard update
+updateLeaderboard();
+     
+              
+              
+              </script>
+        
+        
+        
+    </body>
+</html>
+      
