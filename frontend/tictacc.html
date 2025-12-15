@@ -975,12 +975,13 @@ signInBtn.addEventListener('click', () => {
     const password = document.getElementById('signin-password').value.trim();
     signInBtn.innerHTML="";
     signInBtn.classList.add("loading");
-    fetch('https://tictac-r424.onrender.com/login', {
+    fetch(`${BACKEND_URL}/login`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ username, password }), credentials: 'include'
+        body: JSON.stringify({ username, password }),
+        credentials: 'include'
     })
     .then(response => response.json())
     .then(data => {
@@ -991,6 +992,7 @@ signInBtn.addEventListener('click', () => {
                 intro.style.display = "none";
                 canvas.style.display = "none";
                 currentPlayer = username;
+                currentUserId = data.user_id;
                 try {
                     localStorage.setItem('user_id', data.user_id);
                 } catch (e) {}
@@ -1016,25 +1018,55 @@ signInBtn.addEventListener('click', () => {
 });
 
 // Fetch user profile
-function fetchUserProfile() {
-    fetch('https://tictac-r424.onrender.com/profile' , {
-        credentials: 'include'
-    })
-    .then(response => response.json())
-    .then(data => {
+function fetchUserProfile(showProfile = true) {
+    const applyProfile = (data) => {
         document.getElementById('username').textContent = data.username;
         document.querySelector('.profilePic').src = `${data.profile_pic}`;
-        
+
         document.querySelector('#player2').src = `${data.profile_pic}`;
         document.getElementById('games').textContent = data.total_games_played;
         document.getElementById('score').textContent = data.cumulative_score;
         document.getElementById('rank').textContent = data.ranking;
-        profile.style.display = 'block';
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        alert('Failed to load profile. Please try again.');
-    });
+        if (showProfile) {
+            profile.style.display = 'block';
+        }
+    };
+
+    fetch(`${BACKEND_URL}/profile`, { credentials: 'include' })
+        .then(async (response) => {
+            if (response.ok) {
+                return response.json();
+            }
+
+            let fallbackUserId = currentUserId;
+            if (!fallbackUserId) {
+                try {
+                    fallbackUserId = localStorage.getItem('user_id');
+                } catch (e) {}
+            }
+
+            const params = new URLSearchParams();
+            if (fallbackUserId) {
+                params.set('user_id', fallbackUserId);
+            } else if (currentPlayer) {
+                params.set('username', currentPlayer);
+            }
+
+            if ([...params.keys()].length === 0) {
+                throw new Error('No profile identifiers available');
+            }
+
+            const fallbackRes = await fetch(`${BACKEND_URL}/profile?${params.toString()}`);
+            if (!fallbackRes.ok) {
+                throw new Error('Profile fetch failed');
+            }
+            return fallbackRes.json();
+        })
+        .then(applyProfile)
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Failed to load profile. Please try again.');
+        });
 }
 
 
@@ -1052,9 +1084,10 @@ https://tictac-r424.onrender.com/leaderboard
 */
 /* NOTE : every other backend throwing error due to new changes*/
 
-const BACKEND_URL = 'https://tictac-r424.onrender.com';
+const BACKEND_URL = 'https://tictacs.onrender.com';
 let socket;
 let currentPlayer;
+let currentUserId;
 let currentGameId;
 
 // DOM Elements
@@ -1292,7 +1325,7 @@ function handleGameOver(data){
     joinQueueButton.disabled = false;
     anotherGame.style.display = "block";
     leaderBtn.style.display="block";
-    fetchUserProfile();
+    fetchUserProfile(false);
     updateLeaderboard();
     
     // Disable the game board or show a "play again" button
@@ -1353,7 +1386,29 @@ async function updateLeaderboard() {
         leaderboardList.innerHTML = '';
         leaderboard.forEach((entry, index) => {
             const listItem = document.createElement('li');
-            listItem.textContent = `${entry[0]}: ${entry[1]} wins`;
+
+            let username;
+            let score;
+            let ranking;
+
+            if (Array.isArray(entry)) {
+                username = entry[0];
+                score = entry[1];
+                ranking = entry[2];
+            } else if (entry && typeof entry === 'object') {
+                username = entry.username;
+                score = entry.score ?? entry.cumulative_score ?? entry.wins;
+                ranking = entry.ranking;
+            }
+
+            if (typeof score === 'undefined') {
+                listItem.textContent = `${username ?? 'Unknown'}: 0`;
+            } else if (typeof ranking === 'undefined' || ranking === null) {
+                listItem.textContent = `${username ?? 'Unknown'}: ${score}`;
+            } else {
+                listItem.textContent = `#${ranking} ${username ?? 'Unknown'}: ${score}`;
+            }
+
             leaderboardList.appendChild(listItem);
         });
     } catch (error) {
