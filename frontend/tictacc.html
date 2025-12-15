@@ -201,7 +201,7 @@ color : #f1f1f1;
           color : grey;
           border-radius : 50%;
           font-size : 50px;
-=          text-align : center;
+text-align : center;
           box-shadow: 0 10px 25px rgba(60, 60, 100, 0.35);
       }
       
@@ -401,6 +401,120 @@ li{
   border-radius:50%;
   margin:0;
 }
+        #how-to-play-btn {
+    /*position: absolute;
+    top: 20px;
+    right: 20px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 25px;
+    font-size: 14px;
+    cursor: pointer;
+    z-index: 1001;
+    transition: transform 0.2s, box-shadow 0.2s;*/
+}
+
+#how-to-play-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+}
+
+#instructions-modal {
+    display: none;
+    position: fixed;
+    z-index: 2000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(5px);
+    scroll-behavior: smooth;
+    border-top-right-radius: 15px;
+    border-bottom-right-radius: 15px;
+}
+
+#instructions-modal::-webkit-scrollbar {
+    display: none;
+}
+
+#instructions-modal {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+
+
+#instructions-content {
+    background-color: white;
+    margin: 5% auto;
+    padding: 30px;
+    border-radius: 15px;
+    width: 90%;
+    max-width: 600px;
+    max-height: 80vh;
+    overflow-y: auto;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+#instructions-content h2 {
+    color: #333;
+    margin-bottom: 20px;
+    text-align: center;
+    font-size: 28px;
+}
+
+#instructions-content h3 {
+    color: #555;
+    margin-top: 25px;
+    margin-bottom: 15px;
+    font-size: 20px;
+    border-bottom: 2px solid #667eea;
+    padding-bottom: 5px;
+}
+
+#instructions-content p, #instructions-content li {
+    color: #666;
+    line-height: 1.6;
+    margin-bottom: 10px;
+}
+
+#instructions-content ul {
+    padding-left: 20px;
+    margin-bottom: 20px;
+}
+
+#instructions-content .close-btn {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 25px;
+    font-size: 16px;
+    cursor: pointer;
+    display: block;
+    margin: 20px auto 0;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+#instructions-content .close-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+}
         </style>
     </head>
     <body>
@@ -505,11 +619,13 @@ li{
              
               <button id="multPlay">MULTI PLAYER</button>
               
-                <button onclick="test();">OPTIONS</button>
+                <button id="how-to-play-btn">HOW TO PLAY</button>
                 
                 <button id="exit">EXIT</button>
                 
-                <p>© Dolani <span style="color:#584068;">ALL RIGHTS RESERVED</span></p>
+                
+                
+                <p>&copy; Dolani <span style="color:#584068;">ALL RIGHTS RESERVED</span></p>
              
              
          </div>
@@ -519,7 +635,7 @@ li{
          <div class="filter">
                
          <div id="login" class="login">
-         <div id="closeBtn">×</div>
+         <div id="closeBtn">&times;</div>
          <div class="wrapper2">
          
           <!-- T A B -->
@@ -580,12 +696,56 @@ li{
         </div>
          <button id="toGame">Play Game</button>
     </div>
-      
     
-         
-         
-        
-        <!-- S C R I P T -->
+    <!-- Instructions Modal -->
+    <div id="instructions-modal">
+        <div id="instructions-content">
+            <h2>How to Play Tic-Tacs</h2>
+            
+            <h3>Objective</h3>
+            <p>Be the first player to get three of your symbols in a row - horizontally, vertically, or diagonally.</p>
+            
+            <h3>Single Player Mode</h3>
+            <ul>
+                <li>Click <strong>SINGLE PLAYER</strong> to start</li>
+                <li>You play as <strong>X</strong> (always go first)</li>
+                <li>The AI plays as <strong>O</strong></li>
+                <li>Click any empty cell to place your X</li>
+                <li>The AI will automatically respond after a short pause</li>
+                <li>The AI uses optimal strategy and will never lose</li>
+            </ul>
+            
+            <h3>Multiplayer Mode</h3>
+            <ul>
+                <li>Click <strong>MULTI PLAYER</strong>, then sign in or create an account</li>
+                <li>Click <strong>Play Game</strong> to join the queue</li>
+                <li>You'll be matched with another player</li>
+                <li>One player is X, the other is O</li>
+                <li>Take turns clicking empty cells</li>
+                <li>The game ends when someone wins or it's a draw</li>
+            </ul>
+            
+            <h3>Game Controls</h3>
+            <ul>
+                <li><strong>Leaderboard</strong>: View top players and scores</li>
+                <li><strong>Play Another Game</strong>: Start a new game after one ends</li>
+                <li><strong>Profile</strong>: View your stats (games played, score, ranking)</li>
+                <li><strong>Close</strong>: Return to the main menu</li>
+            </ul>
+            
+            <h3>Tips</h3>
+            <ul>
+                <li>Control the center cell; it gives the most winning opportunities</li>
+                <li>Block your opponent when they have two in a row</li>
+                <li>In single-player, perfect play results in a draw</li>
+                <li>Look for fork opportunities (two ways to win on your next turn)</li>
+            </ul>
+            
+            <button class="close-btn" onclick="closeInstructions()">Got it!</button>
+        </div>
+    </div>
+    
+    <!-- S C R I P T -->
         
             <script>
       const singPlayer = document.querySelector("#singPlay");
@@ -1117,6 +1277,25 @@ singPlayer.addEventListener('click', () => {
     displayMessage("Your turn! You are X.");
     aiBoard = Array(9).fill('');
     isPlayerTurn = true;
+});
+
+// Instructions modal
+const howToPlayBtn = document.getElementById('how-to-play-btn');
+const instructionsModal = document.getElementById('instructions-modal');
+
+howToPlayBtn.addEventListener('click', () => {
+    instructionsModal.style.display = 'block';
+});
+
+function closeInstructions() {
+    instructionsModal.style.display = 'none';
+}
+
+// Close modal when clicking outside
+window.addEventListener('click', (event) => {
+    if (event.target === instructionsModal) {
+        closeInstructions();
+    }
 });
 
 // User Registration
