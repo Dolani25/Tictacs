@@ -30,6 +30,7 @@ def get_random_profile_picture():
 # Get the Database URL from environment variable
 DATABASE_URL = "postgres://postgres.xunmlrfhlpcyidasalro:qnimsMAiQUpBzlrj@aws-1-eu-west-3.pooler.supabase.com:6543/postgres"
 
+
 # Ensure the URL starts with 'postgresql://' instead of 'postgres://'
 if DATABASE_URL.startswith("postgres://"):
     DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
@@ -354,10 +355,27 @@ def get_leaderboard():
 def get_profile():
     print("session data : " , session)
     user_id = session.get('user_id')
+    username = session.get('username')
+
     if not user_id:
+        user_id_param = request.args.get('user_id')
+        username_param = request.args.get('username')
+        if user_id_param:
+            try:
+                user_id = int(user_id_param)
+            except ValueError:
+                user_id = None
+        if not user_id and username_param:
+            username = username_param
+
+    user = None
+    if user_id:
+        user = User.query.get(user_id)
+    if not user and username:
+        user = User.query.filter_by(username=username).first()
+
+    if not user:
         return jsonify({"message": "Not logged in"}), 401
-    
-    user = User.query.get(user_id)
     if not user:
         return jsonify({"message": "User not found"}), 404
     
@@ -388,8 +406,5 @@ def handle_disconnect():
 
 if __name__ == '__main__':
     socketio.run(app, host='0.0.0.0', port=8000)
-
-
-
 
 
