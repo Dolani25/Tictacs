@@ -1089,6 +1089,9 @@ let socket;
 let currentPlayer;
 let currentUserId;
 let currentGameId;
+let isSinglePlayer = false;
+let aiBoard = [];
+let isPlayerTurn = true;
 
 // DOM Elements
 const usernameInput = document.querySelector("#signup-username"); //document.getElementById('username-input');
@@ -1102,6 +1105,19 @@ const leaderboardList = document.getElementById('leaderboard-list');
 createAcc.addEventListener('click', registerUser);
 joinQueueButton.addEventListener('click', joinQueue);
 anotherGame.addEventListener('click', joinQueue);
+
+// Single Player toggle
+singPlayer.addEventListener('click', () => {
+    isSinglePlayer = true;
+    filter.style.display = "none";
+    intro.style.display = "none";
+    canvas.style.display = "none";
+    gameStatus.style.display = "block";
+    resetGameBoard();
+    displayMessage("Your turn! You are X.");
+    aiBoard = Array(9).fill('');
+    isPlayerTurn = true;
+});
 
 // User Registration
 async function registerUser() {
@@ -1270,13 +1286,132 @@ function resetGameBoard() {
 
 // Make a Move
 function makeMove(position) {
-    if (currentGameId) {
-        socket.emit('make_move', {
-            game_id: currentGameId,
-            player: currentPlayer,
-            position: position
-        });
+    if (isSinglePlayer) {
+        if (!isPlayerTurn || aiBoard[position] !== '') return;
+        aiBoard[position] = 'X';
+        renderMove(position, 'X');
+        const winner = checkWinner(aiBoard);
+        if (winner) {
+            endSinglePlayerGame(winner);
+            return;
+        }
+        if (!aiBoard.includes('')) {
+            endSinglePlayerGame('draw');
+            return;
+        }
+        isPlayerTurn = false;
+        displayMessage("AI is thinking...");
+        setTimeout(() => {
+            const aiMove = getBestMove(aiBoard);
+            aiBoard[aiMove] = 'O';
+            renderMove(aiMove, 'O');
+            const winner = checkWinner(aiBoard);
+            if (winner) {
+                endSinglePlayerGame(winner);
+                return;
+            }
+            if (!aiBoard.includes('')) {
+                endSinglePlayerGame('draw');
+                return;
+            }
+            isPlayerTurn = true;
+            displayMessage("Your turn!");
+        }, 300);
+    } else {
+        if (currentGameId) {
+            socket.emit('make_move', {
+                game_id: currentGameId,
+                player: currentPlayer,
+                position: position
+            });
+        }
     }
+}
+
+// Render a move on the board
+function renderMove(position, player) {
+    const x = (position % 3) * 66.67;
+    const y = Math.floor(position / 3) * 66.67;
+    const use = document.createElementNS("http://www.w3.org/2000/svg", "use");
+    use.setAttribute("href", player === 'X' ? "#x-symb" : "#o-symb");
+    use.setAttribute("x", x);
+    use.setAttribute("y", y);
+    gameBoard.appendChild(use);
+}
+
+// Check winner for AI board
+function checkWinner(board) {
+    const lines = [
+        [0,1,2],[3,4,5],[6,7,8],
+        [0,3,6],[1,4,7],[2,5,8],
+        [0,4,8],[2,4,6]
+    ];
+    for (const [a,b,c] of lines) {
+        if (board[a] && board[a] === board[b] && board[a] === board[c]) {
+            return board[a];
+        }
+    }
+    return null;
+}
+
+// Minimax AI
+function getBestMove(board) {
+    function minimax(newBoard, player) {
+        const winner = checkWinner(newBoard);
+        if (winner === 'O') return {score: 10};
+        if (winner === 'X') return {score: -10};
+        if (!newBoard.includes('')) return {score: 0};
+
+        const moves = [];
+        for (let i = 0; i < 9; i++) {
+            if (newBoard[i] === '') {
+                newBoard[i] = player;
+                const result = minimax(newBoard, player === 'O' ? 'X' : 'O');
+                moves.push({ ...result, index: i });
+                newBoard[i] = '';
+            }
+        }
+
+        if (player === 'O') {
+            let bestMove = null;
+            let bestScore = -Infinity;
+            for (const move of moves) {
+                if (move.score > bestScore) {
+                    bestScore = move.score;
+                    bestMove = move.index;
+                }
+            }
+            return {score: bestScore, index: bestMove};
+        } else {
+            let bestMove = null;
+            let bestScore = Infinity;
+            for (const move of moves) {
+                if (move.score < bestScore) {
+                    bestScore = move.score;
+                    bestMove = move.index;
+                }
+            }
+            return {score: bestScore, index: bestMove};
+        }
+    }
+
+    const result = minimax(board.slice(), 'O');
+    return result.index;
+}
+
+// End single player game
+function endSinglePlayerGame(winner) {
+    if (winner === 'draw') {
+        displayMessage("It's a draw!");
+    } else if (winner === 'X') {
+        displayMessage("You won!");
+    } else {
+        displayMessage("AI won!");
+    }
+    isPlayerTurn = false;
+    anotherGame.style.display = "block";
+    leaderBtn.style.display = "block";
+    updateLeaderboard();
 }
 
 // Handle Move Made
@@ -1289,7 +1424,6 @@ function handleMoveMade(data) {
     use.setAttribute("y", y);
     gameBoard.appendChild(use);
 }
-
 // Handle Next Turn
 function handleNextTurn(data) {
     if (data.player === currentPlayer) {
